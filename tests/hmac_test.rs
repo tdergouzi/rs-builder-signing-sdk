@@ -1,4 +1,4 @@
-use builder_signing_sdk::signing::build_hmac_signature;
+use rs_builder_signing_sdk::signing::build_hmac_signature;
 
 #[test]
 fn test_build_hmac_signature() {

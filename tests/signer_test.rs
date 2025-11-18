@@ -1,4 +1,4 @@
-use builder_signing_sdk::{BuilderApiKeyCreds, BuilderSigner};
+use rs_builder_signing_sdk::{BuilderApiKeyCreds, BuilderSigner};
 
 #[test]
 fn test_create_builder_header_payload() {
