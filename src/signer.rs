@@ -5,50 +5,18 @@ use crate::signing::build_hmac_signature;
 use crate::types::{BuilderApiKeyCreds, BuilderHeaderPayload};
 
 /// Builder signer for creating authenticated headers locally
-///
-/// # Example
-/// ```
-/// use builder_signing_sdk::{BuilderSigner, BuilderApiKeyCreds};
-///
-/// let creds = BuilderApiKeyCreds {
-///     key: "my-api-key".to_string(),
-///     secret: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=".to_string(),
-///     passphrase: "my-passphrase".to_string(),
-/// };
-///
-/// let signer = BuilderSigner::new(creds);
-/// let headers = signer.create_builder_header_payload(
-///     "POST",
-///     "/order",
-///     Some(r#"{"marketId":"0x123"}"#),
-///     None,
-/// ).unwrap();
-/// ```
 #[derive(Debug, Clone)]
 pub struct BuilderSigner {
     creds: BuilderApiKeyCreds,
 }
 
 impl BuilderSigner {
-    /// Create a new BuilderSigner with the given credentials
+    /// Create a new signer with API credentials
     pub fn new(creds: BuilderApiKeyCreds) -> Self {
         Self { creds }
     }
 
     /// Create builder header payload for API authentication
-    ///
-    /// # Arguments
-    /// * `method` - HTTP method (e.g., "GET", "POST")
-    /// * `path` - API endpoint path (e.g., "/order")
-    /// * `body` - Optional request body as string
-    /// * `timestamp` - Optional Unix timestamp (defaults to current time)
-    ///
-    /// # Returns
-    /// HashMap with builder authentication headers:
-    /// - POLY_BUILDER_API_KEY
-    /// - POLY_BUILDER_PASSPHRASE
-    /// - POLY_BUILDER_SIGNATURE
-    /// - POLY_BUILDER_TIMESTAMP
     pub fn create_builder_header_payload(
         &self,
         method: &str,
@@ -77,7 +45,7 @@ impl BuilderSigner {
         Ok(headers)
     }
 
-    /// Get a reference to the credentials
+    /// Get reference to credentials
     pub fn creds(&self) -> &BuilderApiKeyCreds {
         &self.creds
     }

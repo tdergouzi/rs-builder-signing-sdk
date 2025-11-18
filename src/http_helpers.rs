@@ -1,15 +1,7 @@
 use crate::error::{BuilderError, Result};
 use crate::types::{BuilderHeaderPayload, RemoteSignerPayload};
 
-/// Send POST request to remote signer
-///
-/// # Arguments
-/// * `endpoint` - Remote signer URL
-/// * `payload` - Request payload with method, path, body, timestamp
-/// * `token` - Optional bearer token for authentication
-///
-/// # Returns
-/// BuilderHeaderPayload with authentication headers from remote signer
+/// Send POST request to remote signer and return authentication headers
 pub async fn post(
     endpoint: &str,
     payload: RemoteSignerPayload,
@@ -18,7 +10,6 @@ pub async fn post(
     let client = reqwest::Client::new();
     let mut request = client.post(endpoint).json(&payload);
 
-    // Add Authorization header if token is provided
     if let Some(token_str) = token {
         request = request.bearer_auth(token_str);
     }

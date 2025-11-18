@@ -6,11 +6,7 @@ use crate::types::{
     RemoteSignerPayload,
 };
 
-/// Configuration for builder signing
-///
-/// Supports two modes:
-/// - Local: Signs requests locally using API credentials
-/// - Remote: Delegates signing to a remote service
+/// Configuration for builder signing (local or remote)
 #[derive(Debug, Clone)]
 pub struct BuilderConfig {
     remote_builder_config: Option<RemoteBuilderConfig>,
@@ -20,17 +16,8 @@ pub struct BuilderConfig {
 
 impl BuilderConfig {
     /// Create a new BuilderConfig
-    ///
-    /// # Arguments
-    /// * `remote_builder_config` - Optional remote signer configuration
-    /// * `local_builder_creds` - Optional local API credentials
-    ///
-    /// # Returns
-    /// Result with BuilderConfig or error if validation fails
-    ///
-    /// # Notes
-    /// - If both local and remote configs are provided, local takes precedence
-    /// - At least one configuration method must be valid
+    /// 
+    /// Note: Local takes precedence if both configs provided
     pub fn new(
         remote_builder_config: Option<RemoteBuilderConfig>,
         local_builder_creds: Option<BuilderApiKeyCreds>,
@@ -41,7 +28,6 @@ impl BuilderConfig {
             signer: None,
         };
 
-        // Validate and set remote config if provided
         if let Some(remote_config) = remote_builder_config {
             if !Self::has_valid_remote_url(&remote_config.url) {
                 return Err(BuilderError::InvalidRemoteUrl(remote_config.url));
@@ -56,7 +42,6 @@ impl BuilderConfig {
             config.remote_builder_config = Some(remote_config);
         }
 
-        // Validate and set local creds if provided
         if let Some(local_creds) = local_builder_creds {
             if !Self::has_valid_local_creds(&local_creds) {
                 return Err(BuilderError::InvalidLocalCredentials(
@@ -68,7 +53,6 @@ impl BuilderConfig {
             config.local_builder_creds = Some(local_creds);
         }
 
-        // Ensure at least one valid configuration
         if !config.is_valid() {
             return Err(BuilderError::InvalidBuilderCreds);
         }
@@ -76,16 +60,7 @@ impl BuilderConfig {
         Ok(config)
     }
 
-    /// Generate builder headers using the configured signing method
-    ///
-    /// # Arguments
-    /// * `method` - HTTP method (e.g., "GET", "POST")
-    /// * `path` - API endpoint path (e.g., "/order")
-    /// * `body` - Optional request body as string
-    /// * `timestamp` - Optional Unix timestamp (defaults to current time)
-    ///
-    /// # Returns
-    /// HashMap with builder authentication headers
+    /// Generate builder authentication headers
     pub async fn generate_builder_headers(
         &self,
         method: &str,
@@ -128,14 +103,13 @@ impl BuilderConfig {
         Err(BuilderError::InvalidBuilderCreds)
     }
 
-    /// Check if the configuration is valid
+    /// Check if configuration is valid
     pub fn is_valid(&self) -> bool {
         self.get_builder_type() != BuilderType::Unavailable
     }
 
-    /// Get the builder type (Local, Remote, or Unavailable)
+    /// Get builder type: Local, Remote, or Unavailable
     pub fn get_builder_type(&self) -> BuilderType {
-        // If both present, prefer local
         if self.local_builder_creds.is_some() {
             return BuilderType::Local;
         }
@@ -147,20 +121,17 @@ impl BuilderConfig {
         BuilderType::Unavailable
     }
 
-    /// Validate local credentials
     fn has_valid_local_creds(creds: &BuilderApiKeyCreds) -> bool {
         !creds.key.trim().is_empty()
             && !creds.secret.trim().is_empty()
             && !creds.passphrase.trim().is_empty()
     }
 
-    /// Validate remote URL
     fn has_valid_remote_url(remote_url: &str) -> bool {
         let url = remote_url.trim();
         !url.is_empty() && (url.starts_with("http://") || url.starts_with("https://"))
     }
 
-    /// Ensure configuration is valid, otherwise return error
     fn ensure_valid(&self) -> Result<()> {
         if self.get_builder_type() == BuilderType::Unavailable {
             return Err(BuilderError::InvalidBuilderCreds);
