@@ -136,7 +136,6 @@ MIT
 ## Acknowledgments
 
 - Original TypeScript implementation: [Polymarket builder-signing-sdk](https://github.com/polymarket/builder-signing-sdk)
-- Inspired by [rs-order-utils](https://github.com/tdergouzi/rs-order-utils) - Rust port of Polymarket order utilities
 
 ---
 
