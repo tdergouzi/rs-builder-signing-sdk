@@ -6,6 +6,7 @@ license = "MIT"
 authors = ["Ted"]
 description = "Rust implementation of Polymarket Builder API authentication with HMAC-SHA256 signatures"
 repository = "https://github.com/tdergouzi/rs-builder-signing-sdk"
+homepage = "https://github.com/tdergouzi/rs-builder-signing-sdk"
 keywords = ["polymarket", "hmac", "authentication", "api", "builder"]
 categories = ["cryptography", "api-bindings"]
 
