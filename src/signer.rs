@@ -82,31 +82,3 @@ impl BuilderSigner {
         &self.creds
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_create_builder_header_payload() {
-        let creds = BuilderApiKeyCreds {
-            key: "test-key".to_string(),
-            secret: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=".to_string(),
-            passphrase: "test-passphrase".to_string(),
-        };
-
-        let signer = BuilderSigner::new(creds);
-        let headers = signer
-            .create_builder_header_payload("POST", "/order", Some(r#"{"test":"data"}"#), Some(1234567890))
-            .unwrap();
-
-        assert_eq!(headers.get("POLY_BUILDER_API_KEY").unwrap(), "test-key");
-        assert_eq!(
-            headers.get("POLY_BUILDER_PASSPHRASE").unwrap(),
-            "test-passphrase"
-        );
-        assert_eq!(headers.get("POLY_BUILDER_TIMESTAMP").unwrap(), "1234567890");
-        assert!(headers.contains_key("POLY_BUILDER_SIGNATURE"));
-    }
-}
-

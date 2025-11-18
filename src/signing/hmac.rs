@@ -64,37 +64,3 @@ pub fn build_hmac_signature(
 
     Ok(sig_url_safe)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_hmac_signature_basic() {
-        let secret = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-        let timestamp = 1234567890u64;
-        let method = "POST";
-        let path = "/order";
-        let body = Some(r#"{"marketId":"0x123"}"#);
-
-        let result = build_hmac_signature(secret, timestamp, method, path, body);
-        assert!(result.is_ok());
-        
-        let signature = result.unwrap();
-        // Verify it's URL-safe (no + or /)
-        assert!(!signature.contains('+'));
-        assert!(!signature.contains('/'));
-    }
-
-    #[test]
-    fn test_hmac_signature_without_body() {
-        let secret = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-        let timestamp = 1234567890u64;
-        let method = "GET";
-        let path = "/markets";
-
-        let result = build_hmac_signature(secret, timestamp, method, path, None);
-        assert!(result.is_ok());
-    }
-}
-

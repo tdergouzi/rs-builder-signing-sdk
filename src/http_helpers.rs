@@ -35,23 +35,3 @@ pub async fn post(
     let headers: BuilderHeaderPayload = response.json().await?;
     Ok(headers)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_post_request_structure() {
-        let payload = RemoteSignerPayload {
-            method: "POST".to_string(),
-            path: "/order".to_string(),
-            body: Some(r#"{"test":"data"}"#.to_string()),
-            timestamp: Some(1234567890),
-        };
-
-        // This test just verifies the function signature and types compile
-        // Actual HTTP testing would require a mock server
-        let _ = payload;
-    }
-}
-
