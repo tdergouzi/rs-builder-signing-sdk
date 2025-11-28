@@ -20,7 +20,7 @@ pub fn build_hmac_signature(
         message.push_str(body_str);
     }
 
-    let base64_secret = general_purpose::STANDARD.decode(secret)?;
+    let base64_secret = general_purpose::URL_SAFE.decode(secret)?;
 
     let mut mac = HmacSha256::new_from_slice(&base64_secret)
         .map_err(|e| crate::error::BuilderError::RemoteSignerError(e.to_string()))?;
